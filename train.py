@@ -150,6 +150,12 @@ def main():
 
     best_acc = -1.0
     best_path = output_dir / "best_model.pt"
+    history = {
+        "train_loss": [],
+        "train_acc": [],
+        "val_loss": [],
+        "val_acc": [],
+    }
 
     for epoch in range(cfg.epochs):
         model.train()
@@ -176,6 +182,10 @@ def main():
         train_acc = running_correct / max(running_total, 1)
 
         val_loss, val_acc = evaluate(model, val_loader, device)
+        history["train_loss"].append(train_loss)
+        history["train_acc"].append(train_acc)
+        history["val_loss"].append(val_loss)
+        history["val_acc"].append(val_acc)
 
         print(
             f"epoch={epoch+1}/{cfg.epochs} train_loss={train_loss:.4f} train_acc={train_acc:.4f} val_loss={val_loss:.4f} val_acc={val_acc:.4f}"
