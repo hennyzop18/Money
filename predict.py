@@ -57,9 +57,20 @@ def main():
     from torchvision import models
     import torch.nn as nn
 
-    model = models.resnet18(weights=None)
-    in_features = model.fc.in_features
-    model.fc = nn.Linear(in_features, len(class_names))
+    # --- BẮT ĐẦU THAY ĐỔI ---
+    
+    # 1. Khởi tạo kiến trúc EfficientNet-B0 (hoặc phiên bản bạn đã huấn luyện)
+    #    weights=None vì chúng ta sẽ load trọng số từ file checkpoint.
+    model = models.efficientnet_b0(weights=None)
+    
+    # 2. Lấy số features đầu vào từ lớp phân loại của EfficientNet
+    in_features = model.classifier[1].in_features
+    
+    # 3. Thay thế lớp phân loại bằng một lớp mới phù hợp với bài toán
+    model.classifier[1] = nn.Linear(in_features, len(class_names))
+    
+    # --- KẾT THÚC THAY ĐỔI ---
+
     model.load_state_dict(ckpt["model"], strict=True)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
