@@ -1,0 +1,7 @@
+kagglehub
+numpy
+opencv-python
+pillow
+streamlit
+torch
+torchvision
