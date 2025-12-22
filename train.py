@@ -159,7 +159,7 @@ def main():
     model = build_model(num_classes=len(class_names), freeze_backbone=True).to(device)
     optimizer = optim.AdamW(model.classifier.parameters(), lr=cfg.lr_feature_extract, weight_decay=cfg.weight_decay)
     criterion = nn.CrossEntropyLoss()
-    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.2, patience=3, verbose=True)
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.2, patience=3)
 
     best_val_accuracy = -1.0
     best_model_path = output_dir / "efficientnet_best_model.pt"
@@ -191,7 +191,7 @@ def main():
     # Tải lại trọng số tốt nhất từ giai đoạn 1 và tạo optimizer mới với LR thấp hơn
     model.load_state_dict(torch.load(best_model_path)["model"])
     optimizer = optim.AdamW(model.parameters(), lr=cfg.lr_fine_tune, weight_decay=cfg.weight_decay)
-    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.2, patience=3, verbose=True)
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.2, patience=3)
 
     for epoch in range(cfg.fine_tune_epochs):
         train_loss, train_accuracy = train_one_epoch(model, train_loader, optimizer, criterion, device)
